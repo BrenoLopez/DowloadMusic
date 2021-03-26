@@ -1,11 +1,30 @@
 package com.cursoandroid.downloadermusic.app.Models;
 
-public class Music {
+import java.io.Serializable;
 
+public class Music implements Serializable {
     private String title;
     private String image;
     private String timestamp;
     private String author;
+    private int id;
+
+    public Music(int id, String title, String image, String timestamp, String author, String videoId) {
+        this.title = title;
+        this.image = image;
+        this.timestamp = timestamp;
+        this.author = author;
+        this.videoId = videoId;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getVideoId() {
         return videoId;
@@ -57,16 +76,10 @@ public class Music {
                 ", image='" + image + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", author='" + author + '\'' +
+                ", id=" + id +
                 ", videoId='" + videoId + '\'' +
                 '}';
     }
 
 
-    public Music(String title, String image, String timestamp, String author, String videoId) {
-        this.title = title;
-        this.image = image;
-        this.timestamp = timestamp;
-        this.author = author;
-        this.videoId = videoId;
-    }
 }

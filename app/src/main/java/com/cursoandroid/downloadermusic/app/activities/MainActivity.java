@@ -1,8 +1,5 @@
 package com.cursoandroid.downloadermusic.app.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,12 +7,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.SearchView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
 import com.cursoandroid.downloadermusic.R;
 import com.cursoandroid.downloadermusic.app.Fragments.ListMusics;
 import com.cursoandroid.downloadermusic.app.Fragments.ListPlaylists;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
+
 
 public class MainActivity extends AppCompatActivity {
     private SmartTabLayout smartTabLayout;
@@ -25,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private static String search;
     private static int state = 0;
     private static int position = 0;
-    @Override
+
+      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -86,16 +88,16 @@ public class MainActivity extends AppCompatActivity {
         });
         return true;
     }
-    private static void handleRequest(int position,int state){
+    private void handleRequest(int position,int state){
         if(search != null && state == 0 ){
             switch (position){
                 case 0:
                     option = "video";
-                    ListMusics.receivedMusics(search,option);
+                    new ListMusics().receivedMusics(search,option,this);
                     break;
                 case 1:
                     option = "playlist";
-                    ListPlaylists.receivePlaylist(search,option);
+                    new ListPlaylists().receivePlaylist(search,option,this);
                     break;
             }
         }

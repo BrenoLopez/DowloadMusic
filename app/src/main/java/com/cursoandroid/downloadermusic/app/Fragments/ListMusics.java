@@ -1,6 +1,9 @@
 package com.cursoandroid.downloadermusic.app.Fragments;
 
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,10 +24,14 @@ import android.widget.Toast;
 
 import com.cursoandroid.downloadermusic.R;
 import com.cursoandroid.downloadermusic.app.Models.Music;
+import com.cursoandroid.downloadermusic.app.Models.PayloadMusicPlayer;
+import com.cursoandroid.downloadermusic.app.activities.MainActivity;
+import com.cursoandroid.downloadermusic.app.activities.MusicPlayer;
 import com.cursoandroid.downloadermusic.app.adapters.ListAdapter;
 import com.cursoandroid.downloadermusic.app.services.Http;
 import com.cursoandroid.downloadermusic.app.utils.RecyclerItemOnClickListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -31,19 +39,15 @@ import java.util.concurrent.ExecutionException;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListMusics extends Fragment {
+
+
+public class ListMusics extends Fragment implements Serializable{
     private static RecyclerView musicList;
     private static List<Music> listMusic = new ArrayList<>();
-    private AdapterView.OnItemClickListener mListener;
-    GestureDetector mGestureDetector;
-
-    public ListMusics() {
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list_musics, container, false);
         musicList= rootView.findViewById(R.id.musicList);
         musicList.setHasFixedSize(true);
@@ -51,8 +55,12 @@ public class ListMusics extends Fragment {
         musicList.addOnItemTouchListener(new RecyclerItemOnClickListener(getActivity().getApplicationContext(), musicList, new RecyclerItemOnClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-              Music music =  listMusic.get(position);
-                Toast.makeText(getActivity().getApplicationContext(),music.getVideoId(),Toast.LENGTH_LONG).show();
+              final Music music =  listMusic.get(position);
+              final PayloadMusicPlayer payload = new PayloadMusicPlayer(music,listMusic);
+//              Toast.makeText(getActivity().getApplicationContext(),music.getVideoId(),Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity().getApplicationContext(), MusicPlayer.class);
+                intent.putExtra("payload", payload);
+                startActivity(intent);
             }
 
             @Override
@@ -72,17 +80,18 @@ public class ListMusics extends Fragment {
         musicList.setAdapter(listAdapter);
         return rootView;
     }
-    public static void receivedMusics(String music, String type) {
+    public void receivedMusics(String music, String type, Context context) {
         if(listMusic.size() > 0){
             listMusic.clear();
         }
         musicList.getAdapter().notifyDataSetChanged();
-
         try {
-            List<?> musics = new Http(music, type).execute().get();
-            System.out.println(musics);
+            List<?> musics = new Http(music, type,context).execute().get();
+            int count = 0;
                 for (Object item :  musics) {
-                    listMusic.add((Music) item);
+                    Music itemMusic = (Music) item;
+                    listMusic.add(new Music(count,itemMusic.getTitle(),itemMusic.getImage(),itemMusic.getTimestamp(),itemMusic.getAuthor(),itemMusic.getVideoId()));
+                    count++;
                 }
         } catch (InterruptedException e) {
             e.printStackTrace();

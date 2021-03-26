@@ -1,6 +1,8 @@
 package com.cursoandroid.downloadermusic.app.Models;
 
-public class Playlist {
+import java.io.Serializable;
+
+public class Playlist implements Serializable {
     private String title;
     private String image;
     private String videoCount;

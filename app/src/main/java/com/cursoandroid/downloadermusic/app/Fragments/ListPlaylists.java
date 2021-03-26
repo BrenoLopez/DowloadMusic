@@ -1,6 +1,7 @@
 package com.cursoandroid.downloadermusic.app.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.cursoandroid.downloadermusic.R;
 import com.cursoandroid.downloadermusic.app.Models.Music;
 import com.cursoandroid.downloadermusic.app.Models.Playlist;
+import com.cursoandroid.downloadermusic.app.activities.MainActivity;
 import com.cursoandroid.downloadermusic.app.adapters.ListAdapter;
 import com.cursoandroid.downloadermusic.app.services.Http;
 import com.cursoandroid.downloadermusic.app.utils.RecyclerItemOnClickListener;
@@ -72,14 +74,14 @@ public class ListPlaylists extends Fragment {
         playlistList.setAdapter(listAdapter);
         return rootView;
     }
-    public static void receivePlaylist(String music, String type) {
+    public void receivePlaylist(String music, String type, Context context) {
         if(listPlaylist.size() > 0){
             listPlaylist.clear();
         }
         playlistList.getAdapter().notifyDataSetChanged();
 
         try {
-            List<?> playlists = new Http(music, type).execute().get();
+            List<?> playlists = new Http(music, type,context).execute().get();
             for (Object item :  playlists) {
                 listPlaylist.add((Playlist) item);
             }
